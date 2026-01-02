@@ -18,11 +18,9 @@
      NAVBAR
 =================================================== -->
 <nav class="navbar navbar-expand-lg navbar-light bg-light">
-  <!-- Logo -->
   <img src="/static/logo.png" height="45" width="45" class="mr-2" alt="logo">
   <a class="navbar-brand font-weight-bold" href="/">pyNotes</a>
 
-  <!-- Right Menu -->
   <ul class="navbar-nav ml-auto">
 
     <!-- Home -->
@@ -31,7 +29,7 @@
     </li>
 
     {% if is_authenticated %}
-      <!-- My Notes (only after login) -->
+      <!-- My Notes -->
       <li class="nav-item {% if active_page == 'notes' %}active{% endif %}">
         <a class="nav-link" href="/my-notes">My Notes</a>
       </li>
@@ -58,8 +56,6 @@
 
 <!-- ===================================================
      HOME PAGE  ( / )
-     - Show Add Note form to everyone
-     - Disable submit if unauthenticated
 =================================================== -->
 {% if active_page == 'home' %}
 <div class="container mt-5 d-flex justify-content-center">
@@ -67,7 +63,6 @@
 
     <h3 class="text-center mb-4">Add a Note</h3>
 
-    <!-- Note Form -->
     <form method="post" action="/note">
       <div class="form-group">
         <label>Note Title</label>
@@ -109,7 +104,6 @@
       </button>
     </form>
 
-    <!-- Info message for unauthenticated users -->
     {% if not is_authenticated %}
       <div class="alert alert-info text-center mt-4">
         Please <a href="/login">login</a> or
@@ -124,7 +118,6 @@
 
 <!-- ===================================================
      MY NOTES PAGE  ( /my-notes )
-     - Show list of notes OR edit form
 =================================================== -->
 {% if active_page == 'notes' %}
 <div class="container mt-5" style="max-width:700px;">
@@ -137,6 +130,7 @@
       {% if newDocs and newDocs|length > 0 %}
         {% for note in newDocs %}
           <li class="list-group-item text-center">
+
             <a href="/my-notes?note_id={{ note.id }}">
               <strong>{{ note.title }}</strong>
             </a>
@@ -146,6 +140,15 @@
             {% endif %}
 
             <p class="mb-1 text-muted">{{ note.desc }}</p>
+
+            <small class="text-muted">
+              {% if note.updated_at and note.updated_at != note.created_at %}
+                Updated on {{ note.updated_at.strftime("%d %b %Y, %I:%M %p") }}
+              {% else %}
+                Created on {{ note.created_at.strftime("%d %b %Y, %I:%M %p") }}
+              {% endif %}
+            </small>
+
           </li>
         {% endfor %}
       {% else %}
@@ -157,9 +160,16 @@
 
   <!-- ================= EDIT NOTE ================= -->
   {% else %}
-    <h4 class="text-center mb-4">Edit Note</h4>
+    <h4 class="text-center mb-2">Edit Note</h4>
 
-    <!-- Update Form -->
+    <p class="text-center text-muted mb-4">
+      {% if selectedNote.updated_at and selectedNote.updated_at != selectedNote.created_at %}
+        Last updated on {{ selectedNote.updated_at.strftime("%d %b %Y, %I:%M %p") }}
+      {% else %}
+        Created on {{ selectedNote.created_at.strftime("%d %b %Y, %I:%M %p") }}
+      {% endif %}
+    </p>
+
     <form method="post" action="/note/{{ selectedNote._id }}/update">
       <div class="form-group">
         <label>Note Title</label>
@@ -195,7 +205,6 @@
       <button class="btn btn-warning btn-block">Update Note</button>
     </form>
 
-    <!-- Delete Button -->
     <form
       method="post"
       action="/note/{{ selectedNote._id }}/delete"
