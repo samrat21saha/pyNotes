@@ -2,6 +2,7 @@ from fastapi import APIRouter, Request, Form
 from fastapi.responses import HTMLResponse, RedirectResponse
 from fastapi.templating import Jinja2Templates
 from datetime import datetime, timezone
+from passlib.exc import UnknownHashError
 
 from config.db import conn
 from utils.jwt import (
@@ -34,35 +35,45 @@ async def signup(
     username: str = Form(...),
     password: str = Form(...),
 ):
-    existing_user = conn.pynotes.users.find_one({"username": username})
+    try:
+        existing_user = conn.pynotes.users.find_one({"username": username})
 
-    if existing_user:
+        if existing_user:
+            return templates.TemplateResponse(
+                "signup.html",
+                {
+                    "request": request,
+                    "error": "Username already exists. Please login or use a different username."
+                }
+            )
+
+        user = {
+            "username": username,
+            "password": hash_password(password),
+            "created_at": datetime.now(timezone.utc),
+        }
+
+        result = conn.pynotes.users.insert_one(user)
+
+        token = create_access_token({"user_id": str(result.inserted_id)})
+
+        response = RedirectResponse("/", status_code=303)
+        response.set_cookie(
+            key="access_token",
+            value=token,
+            httponly=True,
+            samesite="lax",
+        )
+        return response
+
+    except Exception as e:
         return templates.TemplateResponse(
             "signup.html",
             {
                 "request": request,
-                "error": "Username already exists. Please login or use a different username."
+                "error": "Something went wrong while creating your account. Please try again."
             }
         )
-
-    user = {
-        "username": username,
-        "password": hash_password(password),  # ✅ CRITICAL FIX
-        "created_at": datetime.now(timezone.utc),
-    }
-
-    result = conn.pynotes.users.insert_one(user)
-
-    token = create_access_token({"user_id": str(result.inserted_id)})
-
-    response = RedirectResponse("/", status_code=303)
-    response.set_cookie(
-        key="access_token",
-        value=token,
-        httponly=True,
-        samesite="lax"
-    )
-    return response
 
 
 # =========================
@@ -85,37 +96,57 @@ async def login(
     username: str = Form(...),
     password: str = Form(...),
 ):
-    user = conn.pynotes.users.find_one({"username": username})
+    try:
+        user = conn.pynotes.users.find_one({"username": username})
 
-    if not user:
+        if not user or "password" not in user:
+            return templates.TemplateResponse(
+                "login.html",
+                {
+                    "request": request,
+                    "error": "Invalid username or password."
+                }
+            )
+
+        try:
+            is_valid = verify_password(password, user["password"])
+        except UnknownHashError:
+            return templates.TemplateResponse(
+                "login.html",
+                {
+                    "request": request,
+                    "error": "Invalid username or password."
+                }
+            )
+
+        if not is_valid:
+            return templates.TemplateResponse(
+                "login.html",
+                {
+                    "request": request,
+                    "error": "Invalid username or password."
+                }
+            )
+
+        token = create_access_token({"user_id": str(user["_id"])})
+
+        response = RedirectResponse("/", status_code=303)
+        response.set_cookie(
+            key="access_token",
+            value=token,
+            httponly=True,
+            samesite="lax",
+        )
+        return response
+
+    except Exception:
         return templates.TemplateResponse(
             "login.html",
             {
                 "request": request,
-                "error": "Invalid username or password."
+                "error": "Login failed due to a server issue. Please try again."
             }
         )
-
-    # ✅ SAFE verification (hashed vs plain)
-    if not verify_password(password, user["password"]):
-        return templates.TemplateResponse(
-            "login.html",
-            {
-                "request": request,
-                "error": "Invalid username or password."
-            }
-        )
-
-    token = create_access_token({"user_id": str(user["_id"])})
-
-    response = RedirectResponse("/", status_code=303)
-    response.set_cookie(
-        key="access_token",
-        value=token,
-        httponly=True,
-        samesite="lax"
-    )
-    return response
 
 
 # =========================
