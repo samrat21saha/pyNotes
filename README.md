@@ -27,6 +27,14 @@ The system is designed to demonstrate **real-world backend engineering practices
 
 Each authenticated user can create, view, update, and delete **only their own notes**, ensuring strict multi-tenant isolation similar to production SaaS systems.
 
+## 📸 Application Demo (Screenshots)
+<img width="1918" height="867" alt="pyNotes thumbnail" src="https://github.com/user-attachments/assets/dfc6534b-d5cf-4389-85de-9fc85ecb6e19" />
+<img width="1918" height="691" alt="pyNotes-signup" src="https://github.com/user-attachments/assets/ad62c785-b983-42fc-9795-8218b152640a" />
+<img width="1918" height="648" alt="pyNotes-login" src="https://github.com/user-attachments/assets/2d9df4e6-57aa-4079-acee-99dd0f3b31c6" />
+<img width="1918" height="867" alt="pyNotes-Add a note" src="https://github.com/user-attachments/assets/85dd5a12-57cc-4775-9e00-1302275383b1" />
+<img width="1918" height="868" alt="pyNotes-MyNotes" src="https://github.com/user-attachments/assets/728536f7-edbf-45ae-98ca-533d81576cb7" />
+<img width="1917" height="867" alt="pyNotes-Edit and Delete Notes" src="https://github.com/user-attachments/assets/496d5cee-26ab-423a-afe9-292790c7c1e4" />
+
 
 ## 🎯 Key Objectives
 
@@ -273,15 +281,6 @@ Focus is on backend correctness and security, not UI completeness
 - No refresh-token implementation yet  
 - Minimal UI (focus is backend correctness)  
 - Single-role user system  
-
-
-## 📸 Application Demo (Screenshots)
-<img width="1918" height="867" alt="pyNotes thumbnail" src="https://github.com/user-attachments/assets/dfc6534b-d5cf-4389-85de-9fc85ecb6e19" />
-<img width="1918" height="691" alt="pyNotes-signup" src="https://github.com/user-attachments/assets/ad62c785-b983-42fc-9795-8218b152640a" />
-<img width="1918" height="648" alt="pyNotes-login" src="https://github.com/user-attachments/assets/2d9df4e6-57aa-4079-acee-99dd0f3b31c6" />
-<img width="1918" height="867" alt="pyNotes-Add a note" src="https://github.com/user-attachments/assets/85dd5a12-57cc-4775-9e00-1302275383b1" />
-<img width="1918" height="868" alt="pyNotes-MyNotes" src="https://github.com/user-attachments/assets/728536f7-edbf-45ae-98ca-533d81576cb7" />
-<img width="1917" height="867" alt="pyNotes-Edit and Delete Notes" src="https://github.com/user-attachments/assets/496d5cee-26ab-423a-afe9-292790c7c1e4" />
 
 
 ## 🛣️ Future Enhancements
