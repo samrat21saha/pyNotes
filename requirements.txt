@@ -1,0 +1,29 @@
+# =========================
+# Core Web Framework
+# =========================
+fastapi
+uvicorn
+
+# =========================
+# Templating & Forms
+# =========================
+jinja2
+python-multipart
+
+# =========================
+# Database (MongoDB)
+# =========================
+pymongo
+dnspython
+
+# =========================
+# Authentication & Security
+# =========================
+python-jose
+passlib
+bcrypt
+
+# =========================
+# Environment Configuration
+# =========================
+python-dotenv
